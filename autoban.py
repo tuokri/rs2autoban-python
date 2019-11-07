@@ -37,7 +37,7 @@ def main():
             ip = groups[1]
             name = None
             try:
-                name = groups[1]
+                name = groups[2]
             except IndexError:
                 pass
 
