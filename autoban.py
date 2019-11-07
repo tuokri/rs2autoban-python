@@ -15,7 +15,8 @@ def main():
     db.init_db(DATABASE_URL)
     ftpc = FTPCollector(FTP_HOST, FTP_PORT, FTP_USERNAME, FTP_PASSWORD)
 
-    print(ftpc.get_new_modifications("/81.19.210.136_7877/ROGame/Logs/Launch.log"))
+    new_m = ftpc.get_new_modifications("/81.19.210.136_7877/ROGame/Logs/Launch.log")
+    print(f"got {len(new_m)} new modifications")
 
 
 if __name__ == '__main__':
