@@ -15,6 +15,7 @@ WA_USERNAME = os.environ["WA_USERNAME"]
 WA_PASSWORD = os.environ["WA_PASSWORD"]
 WA_URL = os.environ["WA_URL"]
 DATABASE_URL = os.environ["DATABASE_URL"]
+WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 
 LOG_IP_REGEX = (r"(.*)\s((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
                 r"{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*PlayerName:\s(.*)")
@@ -23,7 +24,7 @@ GRACE_PERIOD = 30
 
 def get_suspicious_ips(ip_dict: dict) -> List[str]:
     susp = []
-    for ip, name in ip_dict:
+    for ip, name in ip_dict.items():
         if name is None:
             print(f"found suspicious ip: {ip}")
             susp.append(ip)
