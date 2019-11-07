@@ -1,4 +1,5 @@
 import os
+import re
 import time
 
 from rs2wapy import RS2WebAdmin
@@ -21,10 +22,18 @@ def main():
     db.init_db(DATABASE_URL)
     ftpc = FTPCollector(FTP_HOST, FTP_PORT, FTP_USERNAME, FTP_PASSWORD)
     wa = RS2WebAdmin(WA_USERNAME, WA_PASSWORD, WA_URL)
+    ips = set()
 
     while True:
         new_m = ftpc.get_new_modifications("/81.19.210.136_7877/ROGame/Logs/Launch.log")
         print(f"got {len(new_m)} new modifications")
+        new_m = "\n".join(new_m)
+        print(f"joined modification string length: {len(new_m)}")
+
+        it = re.finditer(LOG_IP_REGEX, new_m)
+        for i in it:
+            ip = i.groups()[1]
+            ips.add(ip)
 
         time.sleep(1)
 
