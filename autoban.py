@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 import time
@@ -6,6 +7,8 @@ from typing import List
 from rs2wapy import RS2WebAdmin
 from rs2wat import FTPCollector
 from rs2wat import db
+
+from simplediscordwh import DiscordWebhook
 
 FTP_HOST = os.environ["FTP_HOST"]
 FTP_PORT = os.environ["FTP_PORT"]
@@ -31,7 +34,7 @@ def get_suspicious_ips(ip_dict: dict) -> List[str]:
     return susp
 
 
-def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin):
+def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin, dwh: DiscordWebhook):
     for ip in ips:
         if ip not in timers:
             t = time.time()
@@ -54,6 +57,8 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin):
                         break
                 if not already_banned:
                     print(f"banning: {ip}")
+                    dwh.post_chat_message(f"{datetime.datetime.now().isoformat()} "
+                                          f"banning suspicious IP {ip}")
                     wa.add_access_policy(ip, "DENY")
 
 
@@ -61,6 +66,7 @@ def main():
     db.init_db(DATABASE_URL)
     ftpc = FTPCollector(FTP_HOST, FTP_PORT, FTP_USERNAME, FTP_PASSWORD)
     wa = RS2WebAdmin(WA_USERNAME, WA_PASSWORD, WA_URL)
+    dwh = DiscordWebhook({"USER_AGENT": "AutoBanBot 1.0", "WEBHOOK_URL": WEBHOOK_URL})
     ips = {}
     timers = {}
 
@@ -92,7 +98,7 @@ def main():
             ips[ip].add(name)
 
         susp = get_suspicious_ips(ips)
-        check_grace_periods(susp, timers, wa)
+        check_grace_periods(susp, timers, wa, dwh)
 
         time.sleep(1)
 
