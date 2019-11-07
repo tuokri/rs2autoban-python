@@ -28,6 +28,7 @@ def main():
         new_m = ftpc.get_new_modifications("/81.19.210.136_7877/ROGame/Logs/Launch.log")
         print(f"got {len(new_m)} new modifications")
         new_m = "\n".join(new_m)
+        print(new_m)
         print(f"joined modification string length: {len(new_m)}")
 
         it = re.finditer(LOG_IP_REGEX, new_m)
