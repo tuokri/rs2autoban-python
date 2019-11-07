@@ -92,7 +92,7 @@ def main():
             ips[ip].add(name)
 
         susp = get_suspicious_ips(ips)
-        check_grace_periods(susp, timers)
+        check_grace_periods(susp, timers, wa)
 
         time.sleep(1)
 
