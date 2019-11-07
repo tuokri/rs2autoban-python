@@ -1,8 +1,8 @@
--e git://github.com/tuokri/rs2wapy.git#egg=rs2wapy
--e git://github.com/tuokri/rs2wat.git#egg=rs2wat
-
 beautifulsoup4==4.8.1
 bs4==0.0.1
 Logbook==1.5.3
 pycurl==7.43.0.3
 soupsieve==1.9.5
+
+-e git://github.com/tuokri/rs2wapy.git#egg=rs2wapy
+-e git://github.com/tuokri/rs2wat.git#egg=rs2wat
