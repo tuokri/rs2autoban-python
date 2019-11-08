@@ -78,10 +78,9 @@ def main():
         new_m = "\n".join(new_m)
         print(f"joined modification string length: {len(new_m)}")
 
-        print(new_m)
-        
         if new_m:
             it = re.finditer(LOG_IP_REGEX, new_m)
+            count = 0
             for i in it:
                 groups = i.groups()
                 line = groups[0]
@@ -107,6 +106,9 @@ def main():
                         pass
 
                 ips[ip].add(name)
+                count += 1
+
+            print(f"processed {count} matches")
 
         susp = get_suspicious_ips(ips)
         check_grace_periods(susp, timers, wa, dwh)
