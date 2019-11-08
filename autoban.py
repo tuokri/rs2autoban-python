@@ -38,13 +38,15 @@ def get_suspicious_ips(ip_dict: dict) -> List[str]:
     return susp
 
 
-def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin, dwh: DiscordWebhook):
+def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin,
+                        dwh: DiscordWebhook) -> List[str]:
     for ip in ips:
         if ip not in timers:
             t = time.time()
             timers[ip] = t
             print(f"starting grace period timer for: {ip}: {t}")
 
+    banned = []
     to_remove = []
     for ip, start_time in timers.items():
         if ip not in ips:
@@ -73,9 +75,16 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin, dwh: Disc
                     if ip not in policy:
                         wa.add_access_policy(ip, "DENY")
 
+                    print(f"adding banned IP to be removed: {ip}")
+                    banned.append(ip)
+
+    to_remove = list(set(to_remove + banned))
+    banned = list(set(banned))
     for tr in to_remove:
         print(f"removing no longer suspicious IP: {tr}")
         timers.pop(tr)
+
+    return banned
 
 
 def main():
@@ -85,6 +94,7 @@ def main():
     dwh = DiscordWebhook({"USER_AGENT": "AutoBanBot 1.0", "WEBHOOK_URL": WEBHOOK_URL})
     ips = {}
     timers = {}
+    banned = []
 
     while True:
         new_m = ftpc.get_new_modifications("/81.19.210.136_7877/ROGame/Logs/Launch.log")
@@ -131,7 +141,11 @@ def main():
             print(f"processed {count} matches")
 
         susp = get_suspicious_ips(ips)
-        check_grace_periods(susp, timers, wa, dwh)
+        banned = check_grace_periods(susp, timers, wa, dwh)
+
+        for b in banned:
+            print(f"removing banned IP from IP dictionary: {b}")
+            ips.pop(b)
 
         time.sleep(1)
 
