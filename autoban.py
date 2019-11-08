@@ -76,26 +76,29 @@ def main():
         new_m = "\n".join(new_m)
         print(f"joined modification string length: {len(new_m)}")
 
-        it = re.finditer(LOG_IP_REGEX, new_m)
-        for i in it:
-            groups = i.groups()
-            ip = groups[1]
-            name = None
-            try:
-                name = groups[2]
-            except IndexError:
-                pass
-
-            if ip not in ips:
-                ips[ip] = set()
-
-            if name:
+        if new_m:
+            it = re.finditer(LOG_IP_REGEX, new_m)
+            for i in it:
+                groups = i.groups()
+                ip = groups[1]
+                name = None
                 try:
-                    ips[ip].remove(None)
-                except KeyError:
+                    name = groups[2]
+                except IndexError:
                     pass
 
-            ips[ip].add(name)
+                if ip not in ips:
+                    ips[ip] = set()
+
+                if name:
+                    try:
+                        ips[ip].remove(None)
+                    except KeyError:
+                        pass
+
+                ips[ip].add(name)
+            else:
+                print("no IPs found in new modifications")
 
         susp = get_suspicious_ips(ips)
         check_grace_periods(susp, timers, wa, dwh)
