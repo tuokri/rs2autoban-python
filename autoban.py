@@ -78,6 +78,8 @@ def main():
         new_m = "\n".join(new_m)
         print(f"joined modification string length: {len(new_m)}")
 
+        print(new_m)
+        
         if new_m:
             it = re.finditer(LOG_IP_REGEX, new_m)
             for i in it:
