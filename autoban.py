@@ -3,6 +3,7 @@ import os
 import re
 import time
 from typing import List
+from urllib.parse import urlparse
 
 from rs2wapy import RS2WebAdmin
 from rs2wat import FTPCollector
@@ -19,6 +20,7 @@ WA_PASSWORD = os.environ["WA_PASSWORD"]
 WA_URL = os.environ["WA_URL"]
 DATABASE_URL = os.environ["DATABASE_URL"]
 WEBHOOK_URL = os.environ["WEBHOOK_URL"]
+SERVER_IP = urlparse(WA_URL).netloc.split(":")[0]
 
 LOG_IP_REGEX = (r"(.*\s((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
                 r"{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*)")
@@ -31,7 +33,7 @@ def get_suspicious_ips(ip_dict: dict) -> List[str]:
     susp = []
     for ip, name_list in ip_dict.items():
         if None in name_list:
-            print(f"found suspicious ip: {ip}, name_list: {name_list}")
+            print(f"found suspicious IP: {ip}, name_list: {name_list}")
             susp.append(ip)
     return susp
 
@@ -43,10 +45,11 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin, dwh: Disc
             timers[ip] = t
             print(f"starting grace period timer for: {ip}: {t}")
 
+    to_remove = []
     for ip, start_time in timers.items():
         if ip not in ips:
-            print(f"removing no longer suspicious ip: {ip}")
-            timers.pop(ip)
+            print(f"adding no longer suspicious IP: {ip} to be removed")
+            to_remove.append(ip)
         else:
             if time.time() > (start_time + GRACE_PERIOD):
                 print(f"grace period expired for {ip}")
@@ -69,6 +72,10 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin, dwh: Disc
                     policy = wa.get_access_policy()
                     if ip not in policy:
                         wa.add_access_policy(ip, "DENY")
+
+    for tr in to_remove:
+        print(f"removing no longer suspicious IP: {tr}")
+        timers.pop(tr)
 
 
 def main():
@@ -97,22 +104,28 @@ def main():
                     continue
 
                 ip = groups[1]
+                if ip == SERVER_IP:
+                    print(f"skipping server's own IP: {ip}")
+                    continue
+
                 name = None
-                try:
-                    name = re.match(PLAYER_NAME_REGEX, line).groups()[0]
-                except (IndexError, AttributeError):
-                    pass
 
                 if ip not in ips:
-                    ips[ip] = set()
+                    print(f"found new IP: {ip}")
+                    ips[ip] = {None}
+                else:
+                    try:
+                        name = re.match(PLAYER_NAME_REGEX, line).groups()[0]
+                    except (IndexError, AttributeError):
+                        pass
 
-                if name:
+                if name is not None:
                     try:
                         ips[ip].remove(None)
                     except KeyError:
                         pass
+                    ips[ip].add(name)
 
-                ips[ip].add(name)
                 count += 1
 
             print(f"processed {count} matches")
