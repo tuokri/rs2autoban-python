@@ -20,9 +20,9 @@ WA_URL = os.environ["WA_URL"]
 DATABASE_URL = os.environ["DATABASE_URL"]
 WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 
-LOG_IP_REGEX = (r"(.*)\s((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
-                r"{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*")
-PLAYER_NAME_REGEX = r".*PlayerName: (.*)"
+LOG_IP_REGEX = (r"(.*\s((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
+                r"{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*)")
+PLAYER_NAME_REGEX = r".*PlayerName:\s(.*).*"
 ADMIN_LOGIN = "ScriptLog: ===== Admin login:"
 GRACE_PERIOD = 30
 
