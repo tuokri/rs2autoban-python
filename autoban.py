@@ -63,6 +63,13 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin, dwh: Disc
                                           f"banning suspicious IP {ip}")
                     wa.add_access_policy(ip, "DENY")
 
+                    # Retry once if WebAdmin is having a fit...
+                    # TODO: Do retrying in rs2wapy instead.
+                    time.sleep(0.1)
+                    policy = wa.get_access_policy()
+                    if ip not in policy:
+                        wa.add_access_policy(ip, "DENY")
+
 
 def main():
     db.init_db(DATABASE_URL)
