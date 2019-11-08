@@ -107,8 +107,6 @@ def main():
                         pass
 
                 ips[ip].add(name)
-            else:
-                print("no IPs found in new modifications")
 
         susp = get_suspicious_ips(ips)
         check_grace_periods(susp, timers, wa, dwh)
