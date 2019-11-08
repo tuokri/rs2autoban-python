@@ -29,9 +29,9 @@ GRACE_PERIOD = 30
 
 def get_suspicious_ips(ip_dict: dict) -> List[str]:
     susp = []
-    for ip, name in ip_dict.items():
-        if name is None:
-            print(f"found suspicious ip: {ip}")
+    for ip, name_list in ip_dict.items():
+        if None in name_list:
+            print(f"found suspicious ip: {ip}, name_list: {name_list}")
             susp.append(ip)
     return susp
 
