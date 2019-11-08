@@ -21,7 +21,9 @@ DATABASE_URL = os.environ["DATABASE_URL"]
 WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 
 LOG_IP_REGEX = (r"(.*)\s((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
-                r"{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*PlayerName:\s(.*)")
+                r"{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*")
+PLAYER_NAME_REGEX = r".*PlayerName: (.*)"
+ADMIN_LOGIN = "ScriptLog: ===== Admin login:"
 GRACE_PERIOD = 30
 
 
@@ -80,11 +82,17 @@ def main():
             it = re.finditer(LOG_IP_REGEX, new_m)
             for i in it:
                 groups = i.groups()
+                line = groups[0]
+
+                if ADMIN_LOGIN.lower() in line.lower():
+                    print(f"skipping admin login line: {line}")
+                    continue
+
                 ip = groups[1]
                 name = None
                 try:
-                    name = groups[2]
-                except IndexError:
+                    name = re.match(PLAYER_NAME_REGEX, line).groups()[0]
+                except (IndexError, AttributeError):
                     pass
 
                 if ip not in ips:
