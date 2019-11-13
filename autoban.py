@@ -1,16 +1,22 @@
 import datetime
+import logging
 import os
 import re
 import subprocess
+import sys
 import time
 from typing import List
 from urllib.parse import urlparse
 
+from logbook import Logger, StreamHandler
 from rs2wapy import RS2WebAdmin
 from rs2wat import FTPCollector
 from rs2wat import db
 
 from simplediscordwh import DiscordWebhook
+
+StreamHandler(sys.stdout, level=logging.WARN).push_application()
+logger = Logger(__name__)
 
 FTP_HOST = os.environ["FTP_HOST"]
 FTP_PORT = os.environ["FTP_PORT"]
@@ -156,5 +162,6 @@ def main():
 
 
 if __name__ == '__main__':
+    logger.info("starting app")
     subprocess.Popen(["python", "alert.py"], stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     main()
