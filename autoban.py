@@ -12,14 +12,14 @@ from logbook import Logger, StreamHandler
 from rs2wapy import RS2WebAdmin
 from rs2wat import FTPCollector
 from rs2wat import db
+from rs2wat.collectors import logger as rs2wat_collectors_logger
 
 from simplediscordwh import DiscordWebhook
 
+mh = StreamHandler(sys.stdout, level=logging.WARN, bubble=True)
 logger = Logger(__name__)
-logger.handlers.append(StreamHandler(sys.stdout, level=logging.WARN, bubble=True))
-
-module_logger = Logger("rs2wat.FTPCollector")
-module_logger.handlers.append(StreamHandler(sys.stdout, level=logging.WARN, bubble=True))
+logger.handlers.append(mh)
+rs2wat_collectors_logger.handlers.append(mh)
 
 FTP_HOST = os.environ["FTP_HOST"]
 FTP_PORT = os.environ["FTP_PORT"]
