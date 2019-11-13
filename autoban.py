@@ -165,6 +165,6 @@ def main():
 
 
 if __name__ == '__main__':
-    logger.info("starting app")
+    logger.warn("starting app")
     subprocess.Popen(["python", "alert.py"], stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     main()
