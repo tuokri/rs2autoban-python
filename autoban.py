@@ -67,10 +67,11 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin,
                     print(f"banning: {ip}")
                     wa.add_access_policy(ip, "DENY")
                     dwh.post_webhook({
-                        "embdeds": [{
-                            "title": "Banning suspicious IP!",
-                            "description": f"{datetime.datetime.now().isoformat()}: {ip}",
-                            "url": "https://whatismyipaddress.com/ip/{ip}",
+                        "embeds": [{
+                            "title?": "Banning suspicious IP!",
+                            "timestamp?": f"{datetime.datetime.now().isoformat()}",
+                            "description?": f"{ip}",
+                            "url?": "https://whatismyipaddress.com/ip/{ip}",
                         }]
                     })
                     print(f"adding banned IP to be removed: {ip}")
