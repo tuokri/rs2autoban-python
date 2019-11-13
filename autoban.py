@@ -68,15 +68,14 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin,
                     wa.add_access_policy(ip, "DENY")
                     dwh.post_webhook({
                         "embeds": [{
-                            "title?": "Banning suspicious IP!",
-                            "timestamp?": f"{datetime.datetime.now().isoformat()}",
-                            "description?": f"An IP with no attached SteamID was found.",
-                            "url?": f"https://whatismyipaddress.com/ip/{ip}",
-                            "color?": 0xFF283A,
-                            "fields?": [
+                            "title": "Banning suspicious IP!",
+                            "timestamp": f"{datetime.datetime.now().isoformat()}",
+                            "description": f"An IP with no attached SteamID was found.",
+                            "color": 0xFF283A,
+                            "fields": [
                                 {
                                     "name": "Banned IP",
-                                    "value": ip,
+                                    "value": f"[{ip}](https://whatismyipaddress.com/ip/{ip})",
                                     "inline?": False,
                                 },
                             ],
