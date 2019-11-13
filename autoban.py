@@ -1,6 +1,7 @@
 import datetime
 import os
 import re
+import subprocess
 import time
 from typing import List
 from urllib.parse import urlparse
@@ -69,13 +70,6 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin,
                         f"banning suspicious IP [{ip}](https://whatismyipaddress.com/ip/{ip})```")
                     wa.add_access_policy(ip, "DENY")
 
-                    # Retry once if WebAdmin is having a fit...
-                    # TODO: Do retrying in rs2wapy instead.
-                    time.sleep(0.1)
-                    policy = wa.get_access_policy()
-                    if ip not in policy:
-                        wa.add_access_policy(ip, "DENY")
-
                     print(f"adding banned IP to be removed: {ip}")
                     banned.append(ip)
 
@@ -95,7 +89,6 @@ def main():
     dwh = DiscordWebhook({"USER_AGENT": "AutoBanBot 1.0", "WEBHOOK_URL": WEBHOOK_URL})
     ips = {}
     timers = {}
-    banned = []
 
     while True:
         new_m = ftpc.get_new_modifications("/81.19.210.136_7877/ROGame/Logs/Launch.log")
@@ -152,4 +145,5 @@ def main():
 
 
 if __name__ == '__main__':
+    subprocess.Popen("python autoban.py", stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     main()
