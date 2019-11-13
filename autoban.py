@@ -20,6 +20,7 @@ mh = StreamHandler(sys.stdout, level=logging.WARN, bubble=True)
 logger = Logger(__name__)
 logger.handlers.append(mh)
 rs2wat_collectors_logger.handlers.append(mh)
+mh.push_application()
 
 FTP_HOST = os.environ["FTP_HOST"]
 FTP_PORT = os.environ["FTP_PORT"]
