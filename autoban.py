@@ -16,11 +16,11 @@ from rs2wat.collectors import logger as rs2wat_collectors_logger
 
 from simplediscordwh import DiscordWebhook
 
-mh = StreamHandler(sys.stdout, level=logging.WARN, bubble=True)
+handler = StreamHandler(sys.stdout, level=logging.WARN)
 logger = Logger(__name__)
-logger.handlers.append(mh)
-rs2wat_collectors_logger.handlers.append(mh)
-mh.push_application()
+logger.handlers.append(handler)
+rs2wat_collectors_logger.handlers.append(handler)
+handler.push_application()
 
 FTP_HOST = os.environ["FTP_HOST"]
 FTP_PORT = os.environ["FTP_PORT"]
