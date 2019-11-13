@@ -71,7 +71,7 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin,
                             "title?": "Banning suspicious IP!",
                             "timestamp?": f"{datetime.datetime.now().isoformat()}",
                             "description?": f"{ip}",
-                            "url?": "https://whatismyipaddress.com/ip/{ip}",
+                            "url?": f"https://whatismyipaddress.com/ip/{ip}",
                         }]
                     })
                     print(f"adding banned IP to be removed: {ip}")
