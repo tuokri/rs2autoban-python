@@ -149,5 +149,5 @@ def main():
 
 
 if __name__ == '__main__':
-    subprocess.Popen("python autoban.py", stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.Popen("python alert.py", stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     main()
