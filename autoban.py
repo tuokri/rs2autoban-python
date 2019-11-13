@@ -49,18 +49,18 @@ def get_suspicious_ips(ip_dict: dict) -> List[str]:
     return susp
 
 
-def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin,
+def check_grace_periods(susp_ips: List[str], timers: dict, wa: RS2WebAdmin,
                         dwh: DiscordWebhook) -> List[str]:
-    for ip in ips:
-        if ip not in timers:
+    for susp_ip in susp_ips:
+        if susp_ip not in timers:
             t = time.time()
-            timers[ip] = t
-            print(f"starting grace period timer for: {ip}: {t}")
+            timers[susp_ip] = t
+            print(f"starting grace period timer for: {susp_ip}: {t}")
 
     banned = []
     to_remove = []
     for ip, start_time in timers.items():
-        if ip not in ips:
+        if ip not in susp_ips:
             print(f"adding no longer suspicious IP: {ip} to be removed")
             to_remove.append(ip)
         else:
@@ -72,6 +72,7 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin,
                     if ip in p:
                         already_banned = True
                         print(f"{ip} already banned in WebAdmin")
+                        banned.append(ip)
                         break
                 if not already_banned:
                     print(f"banning: {ip}")
