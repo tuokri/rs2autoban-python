@@ -84,7 +84,7 @@ def check_grace_periods(ips: List[str], timers: dict, wa: RS2WebAdmin,
                     # print(f"adding banned IP to be removed: {ip}")
                     banned.append(ip)
 
-    to_remove = list(set(to_remove))
+    to_remove = list(set(to_remove + banned))
     banned = list(set(banned))
     for tr in to_remove:
         print(f"removing no longer suspicious IP: {tr}")
