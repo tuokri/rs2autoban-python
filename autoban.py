@@ -15,8 +15,8 @@ from rs2wat import db
 
 from simplediscordwh import DiscordWebhook
 
-StreamHandler(sys.stdout, level=logging.WARN).push_application()
 logger = Logger(__name__)
+logger.handlers.append(StreamHandler(sys.stdout, level=logging.WARN, bubble=True))
 
 FTP_HOST = os.environ["FTP_HOST"]
 FTP_PORT = os.environ["FTP_PORT"]
