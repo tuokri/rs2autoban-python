@@ -37,7 +37,7 @@ LOG_IP_REGEX = (r"(.*\s((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
                 r"{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*)")
 PLAYER_NAME_REGEX = r".*PlayerGUID:\s(.*)\sPlayerIP.*"
 ADMIN_LOGIN = "ScriptLog: ===== Admin login:"
-GRACE_PERIOD = 30
+GRACE_PERIOD = 60 * 5
 
 
 def get_suspicious_ips(ip_dict: dict) -> List[str]:
