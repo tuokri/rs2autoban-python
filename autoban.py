@@ -118,6 +118,10 @@ def main():
         new_m = "\n".join(new_m)
         print(f"joined modification string length: {len(new_m)}")
 
+        # Temporary:
+        time.sleep(5)
+        continue
+
         if new_m:
             it = re.finditer(LOG_IP_REGEX, new_m)
             count = 0
@@ -169,4 +173,4 @@ def main():
 if __name__ == '__main__':
     logger.warn("starting app")
     subprocess.Popen(["python", "alert.py"], stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    # main()
+    main()
