@@ -169,7 +169,7 @@ def main():
             print(f"processed {count} matches")
 
         # Disable autobanning temporarily.
-        # susp = get_suspicious_ips(ips)
+        susp = get_suspicious_ips(ip_to_ids)
         # banned = check_grace_periods(susp, timers, wa, dwh)
 
         # for b in banned:
