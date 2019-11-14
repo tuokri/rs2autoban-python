@@ -109,8 +109,9 @@ def main():
     ftpc = FTPCollector(FTP_HOST, FTP_PORT, FTP_USERNAME, FTP_PASSWORD)
     wa = RS2WebAdmin(WA_USERNAME, WA_PASSWORD, WA_URL)
     dwh = DiscordWebhook({"USER_AGENT": "AutoBanBot 1.0", "WEBHOOK_URL": WEBHOOK_URL})
-    ips = {}
     timers = {}
+
+    ip_to_ids = db.get_all_user_ips()
 
     while True:
         new_m = ftpc.get_new_modifications("/81.19.210.136_7877/ROGame/Logs/Launch.log")
@@ -118,12 +119,9 @@ def main():
         new_m = "\n".join(new_m)
         print(f"joined modification string length: {len(new_m)}")
 
-        # Temporary:
-        time.sleep(5)
-        continue
-
         if new_m:
             it = re.finditer(LOG_IP_REGEX, new_m)
+
             count = 0
             for i in it:
                 groups = i.groups()
@@ -138,34 +136,37 @@ def main():
                     print(f"skipping server's own IP: {ip}")
                     continue
 
-                name = None
+                steamid64 = None
 
-                if ip not in ips:
+                if ip not in ip_to_ids:
                     print(f"found new IP: {ip}")
-                    ips[ip] = {None}
+                    ip_to_ids[ip] = {None}
+                    db.insert_ip(ip)
                 else:
                     try:
-                        name = re.match(PLAYER_NAME_REGEX, line).groups()[0]
+                        steamid64 = int(re.match(PLAYER_NAME_REGEX, line).groups()[0])
                     except (IndexError, AttributeError):
                         pass
 
-                if name is not None:
+                if steamid64 is not None:
                     try:
-                        ips[ip].remove(None)
+                        ip_to_ids[ip].remove(None)
                     except KeyError:
                         pass
-                    ips[ip].add(name)
+                    ip_to_ids[ip].add(steamid64)
+                    db.insert_user(steamid64)
 
                 count += 1
 
             print(f"processed {count} matches")
 
-        susp = get_suspicious_ips(ips)
-        banned = check_grace_periods(susp, timers, wa, dwh)
+        # Disable autobanning temporarily.
+        # susp = get_suspicious_ips(ips)
+        # banned = check_grace_periods(susp, timers, wa, dwh)
 
-        for b in banned:
-            print(f"removing banned IP from IP dictionary: {b}")
-            ips.pop(b)
+        # for b in banned:
+        #     print(f"removing banned IP from IP dictionary: {b}")
+        #     ips.pop(b)
 
         time.sleep(1)
 
