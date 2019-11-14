@@ -35,7 +35,7 @@ SERVER_IP = urlparse(WA_URL).netloc.split(":")[0]
 
 LOG_IP_REGEX = (r"(.*\s((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
                 r"{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*)")
-PLAYER_NAME_REGEX = r".*PlayerGUID:\s(.*)\s.*"
+PLAYER_NAME_REGEX = r".*PlayerGUID:\s(.*)\sPlayerIP.*"
 ADMIN_LOGIN = "ScriptLog: ===== Admin login:"
 GRACE_PERIOD = 30
 
