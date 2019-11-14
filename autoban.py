@@ -141,7 +141,8 @@ def main():
                 if ip not in ip_to_ids:
                     print(f"found new IP: {ip}")
                     ip_to_ids[ip] = {None}
-                    db.insert_ip(ip)
+                    if not db.get_ip(ip):
+                        db.insert_ip(ip)
                 else:
                     try:
                         steamid64 = int(re.match(PLAYER_NAME_REGEX, line).groups()[0])
@@ -154,7 +155,8 @@ def main():
                     except KeyError:
                         pass
                     ip_to_ids[ip].add(steamid64)
-                    db.insert_user(steamid64)
+                    if not db.get_user(steamid64):
+                        db.insert_user(steamid64)
 
                 print(ip_to_ids)
                 count += 1
