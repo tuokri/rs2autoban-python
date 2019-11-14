@@ -156,6 +156,7 @@ def main():
                     ip_to_ids[ip].add(steamid64)
                     db.insert_user(steamid64)
 
+                print(ip_to_ids)
                 count += 1
 
             print(f"processed {count} matches")
