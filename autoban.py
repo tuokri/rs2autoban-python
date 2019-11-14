@@ -35,7 +35,7 @@ SERVER_IP = urlparse(WA_URL).netloc.split(":")[0]
 
 LOG_IP_REGEX = (r"(.*\s((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
                 r"{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)).*)")
-PLAYER_NAME_REGEX = r".*SteamID:\s(.*).*"
+PLAYER_NAME_REGEX = r".*PlayerGUID:\s(.*).*"
 ADMIN_LOGIN = "ScriptLog: ===== Admin login:"
 GRACE_PERIOD = 30
 
@@ -157,6 +157,11 @@ def main():
                     ip_to_ids[ip].add(steamid64)
                     if not db.get_user(steamid64):
                         db.insert_user(steamid64)
+
+                for ip_to_add_to_db, ids in ip_to_ids.items():
+                    for steam_id in ids:
+                        if steam_id:
+                            db.insert_user_ip(ip_to_add_to_db, steam_id)
 
                 print(ip_to_ids)
                 count += 1
