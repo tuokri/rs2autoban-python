@@ -161,7 +161,7 @@ def main():
                 for ip_to_add_to_db, ids in ip_to_ids.items():
                     for steam_id in ids:
                         if steam_id:
-                            db.insert_user_ip(ip_to_add_to_db, steam_id)
+                            db.insert_user_ip(ip=ip_to_add_to_db, steamid64=steam_id)
 
                 print(ip_to_ids)
                 count += 1
