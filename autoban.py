@@ -46,9 +46,10 @@ def get_suspicious_ips(ip_dict: dict) -> List[str]:
     susp = []
     for ip, steamid64_list in ip_dict.items():
         if BANNED in steamid64_list:
-            print(f"skipping susp check for already banned IP: {ip}")
+            logger.info("skipping susp check for already banned IP: {ip}", ip=ip)
         elif None in steamid64_list:
-            print(f"found suspicious IP: {ip}, steamid64_list: {steamid64_list}")
+            logger.info("found suspicious IP: {ip}, steamid64_list: {ids}",
+                        ip=ip, ids=steamid64_list)
             susp.append(ip)
     return susp
 
@@ -59,27 +60,28 @@ def check_grace_periods(susp_ips: List[str], timers: dict, wa: RS2WebAdmin,
         if susp_ip not in timers:
             t = time.time()
             timers[susp_ip] = t
-            print(f"starting grace period timer for: {susp_ip}: {t}")
+            logger.info("starting grace period timer for: {susp_ip}: {t}",
+                        susp_ip=susp_ip, t=t)
 
     banned = []
     to_remove = []
     for ip, start_time in timers.items():
         if ip not in susp_ips:
-            print(f"adding no longer suspicious IP: {ip} to be removed")
+            logger.info("adding no longer suspicious IP: {ip} to be removed", ip=ip)
             to_remove.append(ip)
         else:
             if time.time() > (start_time + GRACE_PERIOD):
-                print(f"grace period expired for {ip}")
+                logger.info("grace period expired for {ip}", ip=ip)
                 policy = wa.get_access_policy()
                 already_banned = False
                 for p in policy:
                     if ip in p:
                         already_banned = True
-                        print(f"{ip} already banned in WebAdmin")
+                        logger.info("{ip} already banned in WebAdmin", ip=ip)
                         banned.append(ip)
                         break
                 if not already_banned:
-                    print(f"banning: {ip}")
+                    logger.info("banning: {ip}", ip=ip)
                     # wa.add_access_policy(ip, "DENY")
                     # dwh.post_webhook({
                     #     "embeds": [{
@@ -100,12 +102,12 @@ def check_grace_periods(susp_ips: List[str], timers: dict, wa: RS2WebAdmin,
 
     to_remove = list(set(to_remove))
     for tr in to_remove:
-        print(f"removing no longer suspicious IP: {tr} from timers")
+        logger.info("removing no longer suspicious IP: {tr} from timers", tr=tr)
         timers.pop(tr)
 
     to_remove = list(set(banned))
     for tr in to_remove:
-        print(f"removing no banned IP: {tr} from timers")
+        logger.info("removing no banned IP: {tr} from timers", tr=tr)
         timers.pop(tr)
 
     return banned
@@ -122,9 +124,9 @@ def main():
 
     while True:
         new_m = ftpc.get_new_modifications("/81.19.210.136_7877/ROGame/Logs/Launch.log")
-        print(f"got {len(new_m)} new modifications")
+        logger.info("got {amount} new modifications", amount=len(new_m))
         new_m = "\n".join(new_m)
-        print(f"joined modification string length: {len(new_m)}")
+        logger.info("joined modification string length: {amount}", amount=len(new_m))
 
         if new_m:
             it = re.finditer(LOG_IP_REGEX, new_m)
@@ -135,18 +137,18 @@ def main():
                 line = groups[0]
 
                 if ADMIN_LOGIN.lower() in line.lower():
-                    print(f"skipping admin login line: {line}")
+                    logger.info("skipping admin login line: {line}", line=line)
                     continue
 
                 ip = groups[1]
                 if ip == SERVER_IP:
-                    print(f"skipping server's own IP: {ip}")
+                    logger.info("skipping server's own IP: {ip}", ip=ip)
                     continue
 
                 steamid64 = None
 
                 if ip not in ip_to_ids:
-                    print(f"found new IP: {ip}")
+                    logger.info("found new IP: {ip}", ip=ip)
                     ip_to_ids[ip] = {None}
                     if not db.get_ip(ip):
                         db.insert_ip(ip)
@@ -170,16 +172,16 @@ def main():
                         if steam_id:
                             db.insert_user_ip(ip=ip_to_add_to_db, steamid64=steam_id)
 
-                print(ip_to_ids)
+                logger.info(ip_to_ids)
                 count += 1
 
-            print(f"processed {count} matches")
+            logger.info("processed {count} matches", count=count)
 
         susp = get_suspicious_ips(ip_to_ids)
         banned = check_grace_periods(susp, timers, wa, dwh)
 
         for b in banned:
-            print(f"setting {b} in IP dictionary as banned ({BANNED})")
+            logger.info("setting {b} in IP dictionary as banned ({status})", b=b, status=BANNED)
             ip_to_ids[b].add(BANNED)
 
         time.sleep(1)
