@@ -176,7 +176,7 @@ def main():
                     for steam_id in steam_ids:
                         if steam_id is not None:
                             if steam_id not in db.get_ip_users(ip_to_add_to_db):
-                                logger.info(db.get_ip_users(ip_to_add_to_db))
+                                logger.debug(db.get_ip_users(ip_to_add_to_db))
                                 db.insert_user_ip(ip=ip_to_add_to_db, steamid64=steam_id)
 
                 count += 1
