@@ -1,6 +1,5 @@
 import os
 import re
-import subprocess
 import sys
 import time
 from typing import List
@@ -188,6 +187,6 @@ def main():
 
 
 if __name__ == "__main__":
-    logger.warn("starting app")
-    subprocess.Popen(["python", "alert.py"], stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+    logger.info("{file} running as {name}", file=__file__, name=__name__)
+    # subprocess.Popen(["python", "alert.py"], stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     main()
