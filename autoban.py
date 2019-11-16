@@ -184,12 +184,12 @@ def main():
             logger.debug(cached_ip_to_ids)
             logger.info("processed {count} matches", count=count)
 
-        susp = get_suspicious_ips(cached_ip_to_ids)
-        banned = check_grace_periods(susp, timers, wa, dwh)
-
-        for b in banned:
-            logger.info("setting {b} in IP dictionary as banned ({status})", b=b, status=BANNED)
-            cached_ip_to_ids[b].add(BANNED)
+        # susp = get_suspicious_ips(cached_ip_to_ids)
+        # banned = check_grace_periods(susp, timers, wa, dwh)
+        #
+        # for b in banned:
+        #     logger.info("setting {b} in IP dictionary as banned ({status})", b=b, status=BANNED)
+        #     cached_ip_to_ids[b].add(BANNED)
 
         time.sleep(1)
 
