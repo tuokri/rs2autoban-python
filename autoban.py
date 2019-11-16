@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 import subprocess
@@ -82,23 +83,23 @@ def check_grace_periods(susp_ips: List[str], timers: dict, wa: RS2WebAdmin,
                         break
                 if not already_banned:
                     logger.info("banning: {ip}", ip=ip)
-                    # wa.add_access_policy(ip, "DENY")
-                    # dwh.post_webhook({
-                    #     "embeds": [{
-                    #         "title": "Banning suspicious IP!",
-                    #         "timestamp": f"{datetime.datetime.now().isoformat()}",
-                    #         "description": f"An IP with no attached SteamID was found.",
-                    #         "color": 0xFF283A,
-                    #         "fields": [
-                    #             {
-                    #                 "name": "Banned IP",
-                    #                 "value": f"[{ip}](https://whatismyipaddress.com/ip/{ip})",
-                    #                 "inline": False,
-                    #             },
-                    #         ],
-                    #     }]
-                    # })
-                    # banned.append(ip)
+                    wa.add_access_policy(ip, "DENY")
+                    dwh.post_webhook({
+                        "embeds": [{
+                            "title": "Banning suspicious IP!",
+                            "timestamp": f"{datetime.datetime.now().isoformat()}",
+                            "description": f"An IP with no attached SteamID was found.",
+                            "color": 0xFF283A,
+                            "fields": [
+                                {
+                                    "name": "Banned IP",
+                                    "value": f"[{ip}](https://whatismyipaddress.com/ip/{ip})",
+                                    "inline": False,
+                                },
+                            ],
+                        }]
+                    })
+                    banned.append(ip)
 
     to_remove = list(set(to_remove))
     for tr in to_remove:
@@ -172,9 +173,9 @@ def main():
                         if steam_id:
                             db.insert_user_ip(ip=ip_to_add_to_db, steamid64=steam_id)
 
-                logger.info(ip_to_ids)
                 count += 1
 
+            logger.debug(ip_to_ids)
             logger.info("processed {count} matches", count=count)
 
         susp = get_suspicious_ips(ip_to_ids)
