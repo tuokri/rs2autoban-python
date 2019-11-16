@@ -1,7 +1,9 @@
 import datetime
 import os
+import sys
 import time
 
+from logbook import StreamHandler, Logger
 from rs2wapy import RS2WebAdmin
 
 from simplediscordwh import DiscordWebhook
@@ -10,6 +12,13 @@ WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 WA_USERNAME = os.environ["WA_USERNAME"]
 WA_PASSWORD = os.environ["WA_PASSWORD"]
 WA_URL = os.environ["WA_URL"]
+
+handler = StreamHandler(sys.stdout, level="INFO")
+handler.format_string = (
+    "[{record.time}] {record.level_name}: {record.module}: "
+    "{record.func_name}: Process({record.process}): {record.message}")
+logger = Logger(__name__)
+logger.handlers.append(handler)
 
 
 def write_exception(e):
@@ -20,7 +29,7 @@ def write_exception(e):
             f.write(e)
             f.write("----------------\n")
     except Exception as e:
-        print(e)
+        logger.error(e)
 
 
 def connect(username, password, url) -> RS2WebAdmin:
@@ -28,7 +37,7 @@ def connect(username, password, url) -> RS2WebAdmin:
         try:
             return RS2WebAdmin(username, password, url)
         except Exception as e:
-            print("retrying connection...")
+            logger.info("retrying connection...")
             write_exception(e)
 
 
@@ -48,7 +57,7 @@ def main():
                     write_exception("error posting web hook message")
                 time.sleep(30 * 30)
             else:
-                print("still ranked...")
+                logger.info("still ranked...")
             time.sleep(15)
         except Exception as e:
             write_exception(e)
@@ -56,5 +65,5 @@ def main():
 
 
 if __name__ == "__main__":
-    print(f"{__file__} running as {__name__}")
+    logger.info("{file} running as {name}", file=__file__, name=__name__)
     main()
