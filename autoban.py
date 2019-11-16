@@ -1,4 +1,3 @@
-import logging
 import os
 import re
 import subprocess
@@ -15,7 +14,7 @@ from rs2wat.collectors import logger as rs2wat_collectors_logger
 
 from simplediscordwh import DiscordWebhook
 
-handler = StreamHandler(sys.stdout, level=logging.INFO)
+handler = StreamHandler(sys.stdout, level="INFO")
 logger = Logger(__name__)
 logger.handlers.append(handler)
 rs2wat_collectors_logger.handlers.append(handler)
