@@ -55,6 +55,6 @@ def main():
             rs2wa = connect(WA_USERNAME, WA_PASSWORD, WA_URL)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(f"{__file__} running as {__name__}")
     main()

@@ -1,4 +1,3 @@
-import datetime
 import logging
 import os
 import re
@@ -16,7 +15,7 @@ from rs2wat.collectors import logger as rs2wat_collectors_logger
 
 from simplediscordwh import DiscordWebhook
 
-handler = StreamHandler(sys.stdout, level=logging.WARN)
+handler = StreamHandler(sys.stdout, level=logging.INFO)
 logger = Logger(__name__)
 logger.handlers.append(handler)
 rs2wat_collectors_logger.handlers.append(handler)
@@ -185,7 +184,7 @@ def main():
         time.sleep(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logger.warn("starting app")
     subprocess.Popen(["python", "alert.py"], stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     main()
