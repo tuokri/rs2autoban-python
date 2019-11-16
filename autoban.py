@@ -38,13 +38,16 @@ LOG_IP_REGEX = (r"(.*\s((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)"
 PLAYER_NAME_REGEX = r".*PlayerGUID:\s(.*)\sPlayerIP.*"
 ADMIN_LOGIN = "ScriptLog: ===== Admin login:"
 GRACE_PERIOD = 60 * 5
+BANNED = -1
 
 
 def get_suspicious_ips(ip_dict: dict) -> List[str]:
     susp = []
-    for ip, name_list in ip_dict.items():
-        if None in name_list:
-            print(f"found suspicious IP: {ip}, name_list: {name_list}")
+    for ip, steamid64_list in ip_dict.items():
+        if BANNED in steamid64_list:
+            print(f"skipping susp check for already banned IP: {ip}")
+        elif None in steamid64_list:
+            print(f"found suspicious IP: {ip}, steamid64_list: {steamid64_list}")
             susp.append(ip)
     return susp
 
@@ -76,29 +79,32 @@ def check_grace_periods(susp_ips: List[str], timers: dict, wa: RS2WebAdmin,
                         break
                 if not already_banned:
                     print(f"banning: {ip}")
-                    wa.add_access_policy(ip, "DENY")
-                    dwh.post_webhook({
-                        "embeds": [{
-                            "title": "Banning suspicious IP!",
-                            "timestamp": f"{datetime.datetime.now().isoformat()}",
-                            "description": f"An IP with no attached SteamID was found.",
-                            "color": 0xFF283A,
-                            "fields": [
-                                {
-                                    "name": "Banned IP",
-                                    "value": f"[{ip}](https://whatismyipaddress.com/ip/{ip})",
-                                    "inline?": False,
-                                },
-                            ],
-                        }]
-                    })
-                    # print(f"adding banned IP to be removed: {ip}")
-                    banned.append(ip)
+                    # wa.add_access_policy(ip, "DENY")
+                    # dwh.post_webhook({
+                    #     "embeds": [{
+                    #         "title": "Banning suspicious IP!",
+                    #         "timestamp": f"{datetime.datetime.now().isoformat()}",
+                    #         "description": f"An IP with no attached SteamID was found.",
+                    #         "color": 0xFF283A,
+                    #         "fields": [
+                    #             {
+                    #                 "name": "Banned IP",
+                    #                 "value": f"[{ip}](https://whatismyipaddress.com/ip/{ip})",
+                    #                 "inline": False,
+                    #             },
+                    #         ],
+                    #     }]
+                    # })
+                    # banned.append(ip)
 
-    to_remove = list(set(to_remove + banned))
-    banned = list(set(banned))
+    to_remove = list(set(to_remove))
     for tr in to_remove:
-        print(f"removing no longer suspicious IP: {tr}")
+        print(f"removing no longer suspicious IP: {tr} from timers")
+        timers.pop(tr)
+
+    to_remove = list(set(banned))
+    for tr in to_remove:
+        print(f"removing no banned IP: {tr} from timers")
         timers.pop(tr)
 
     return banned
@@ -170,11 +176,11 @@ def main():
 
         # Disable autobanning temporarily.
         susp = get_suspicious_ips(ip_to_ids)
-        # banned = check_grace_periods(susp, timers, wa, dwh)
+        banned = check_grace_periods(susp, timers, wa, dwh)
 
-        # for b in banned:
-        #     print(f"removing banned IP from IP dictionary: {b}")
-        #     ips.pop(b)
+        for b in banned:
+            print(f"setting {b} in IP dictionary as banned ({BANNED})")
+            ip_to_ids[b].add(BANNED)
 
         time.sleep(1)
 
