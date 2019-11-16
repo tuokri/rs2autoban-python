@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 import time
+from collections import defaultdict
 from typing import List
 from urllib.parse import urlparse
 
@@ -121,9 +122,9 @@ def main():
     dwh = DiscordWebhook({"USER_AGENT": "AutoBanBot 1.0", "WEBHOOK_URL": WEBHOOK_URL})
     timers = {}
 
-    ip_to_ids = db.get_all_user_ips()
-
     while True:
+        cached_ip_to_ids = db.get_all_user_ips()
+
         new_m = ftpc.get_new_modifications("/81.19.210.136_7877/ROGame/Logs/Launch.log")
         logger.info("got {amount} new modifications", amount=len(new_m))
         new_m = "\n".join(new_m)
@@ -131,6 +132,8 @@ def main():
 
         if new_m:
             it = re.finditer(LOG_IP_REGEX, new_m)
+
+            new_ips_to_ids = defaultdict(set)
 
             count = 0
             for i in it:
@@ -148,9 +151,9 @@ def main():
 
                 steamid64 = None
 
-                if ip not in ip_to_ids:
+                if ip not in cached_ip_to_ids:
                     logger.info("found new IP: {ip}", ip=ip)
-                    ip_to_ids[ip] = {None}
+                    new_ips_to_ids[ip].add(None)
                     if not db.get_ip(ip):
                         db.insert_ip(ip)
                 else:
@@ -161,29 +164,30 @@ def main():
 
                 if steamid64 is not None:
                     try:
-                        ip_to_ids[ip].remove(None)
+                        new_ips_to_ids[ip].remove(None)
                     except KeyError:
                         pass
-                    ip_to_ids[ip].add(steamid64)
+                    new_ips_to_ids[ip].add(steamid64)
                     if not db.get_user(steamid64):
                         db.insert_user(steamid64)
 
-                for ip_to_add_to_db, ids in ip_to_ids.items():
-                    for steam_id in ids:
-                        if steam_id:
-                            db.insert_user_ip(ip=ip_to_add_to_db, steamid64=steam_id)
+                for ip_to_add_to_db, steam_ids in new_ips_to_ids.items():
+                    for steam_id in steam_ids:
+                        if steam_id is not None:
+                            if steam_id not in db.get_ip_users(steam_id):
+                                db.insert_user_ip(ip=ip_to_add_to_db, steamid64=steam_id)
 
                 count += 1
 
-            logger.debug(ip_to_ids)
+            logger.debug(cached_ip_to_ids)
             logger.info("processed {count} matches", count=count)
 
-        susp = get_suspicious_ips(ip_to_ids)
+        susp = get_suspicious_ips(cached_ip_to_ids)
         banned = check_grace_periods(susp, timers, wa, dwh)
 
         for b in banned:
             logger.info("setting {b} in IP dictionary as banned ({status})", b=b, status=BANNED)
-            ip_to_ids[b].add(BANNED)
+            cached_ip_to_ids[b].add(BANNED)
 
         time.sleep(1)
 
