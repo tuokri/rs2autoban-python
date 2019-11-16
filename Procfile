@@ -1,2 +1,2 @@
-worker: python autoban.py
-worker: python alert.py
+autoban: python autoban.py
+unranked_alert: python alert.py
