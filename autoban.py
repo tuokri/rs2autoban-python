@@ -15,8 +15,9 @@ from rs2wat.collectors import logger as rs2wat_collectors_logger
 from simplediscordwh import DiscordWebhook
 
 handler = StreamHandler(sys.stdout, level="INFO")
-handler.format_string = "[{asctime}] {levelname}: {module}: {filename}: " \
-                        "{funcName}: Process({process}): {message}"
+handler.format_string = (
+    "[{record.time}] {record.level_name}: {record.module}: "
+    "{record.func_name}: Process({record.process}): {record.message}")
 logger = Logger(__name__)
 logger.handlers.append(handler)
 rs2wat_collectors_logger.handlers.append(handler)
