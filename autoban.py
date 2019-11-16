@@ -156,11 +156,13 @@ def main():
                     new_ips_to_ids[ip].add(None)
                     if not db.get_ip(ip):
                         db.insert_ip(ip)
-                else:
-                    try:
-                        steamid64 = int(re.match(PLAYER_NAME_REGEX, line).groups()[0])
-                    except (IndexError, AttributeError):
-                        pass
+
+                try:
+                    steamid64 = int(re.match(PLAYER_NAME_REGEX, line).groups()[0])
+                    logger.info("found SteamId64:{steamid64} for IP:{ip}",
+                                steamid64=steamid64, ip=ip)
+                except (IndexError, AttributeError):
+                    pass
 
                 if steamid64 is not None:
                     try:
@@ -174,7 +176,7 @@ def main():
                 for ip_to_add_to_db, steam_ids in new_ips_to_ids.items():
                     for steam_id in steam_ids:
                         if steam_id is not None:
-                            if steam_id not in db.get_ip_users(steam_id):
+                            if steam_id not in db.get_ip_users(ip_to_add_to_db):
                                 db.insert_user_ip(ip=ip_to_add_to_db, steamid64=steam_id)
 
                 count += 1
