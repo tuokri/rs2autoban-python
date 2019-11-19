@@ -153,7 +153,8 @@ def main():
                     logger.info("found new IP: {ip}", ip=ip)
                     new_ips_to_ids[ip].add(None)
                     if not db.get_ip(ip):
-                        db.insert_ip(ip)
+                        pass
+                        # db.insert_ip(ip)
 
                 steamid64 = None
                 try:
@@ -170,14 +171,15 @@ def main():
                         pass
                     new_ips_to_ids[ip].add(steamid64)
                     if not db.get_user(steamid64):
-                        db.insert_user(steamid64)
+                        pass
+                        # db.insert_user(steamid64)
 
                 for ip_to_add_to_db, steam_ids in new_ips_to_ids.items():
                     for steam_id in steam_ids:
                         if steam_id is not None:
                             if steam_id not in db.get_ip_users(ip_to_add_to_db):
                                 logger.debug(db.get_ip_users(ip_to_add_to_db))
-                                db.insert_user_ip(ip=ip_to_add_to_db, steamid64=steam_id)
+                                # db.insert_user_ip(ip=ip_to_add_to_db, steamid64=steam_id)
 
                 count += 1
 
