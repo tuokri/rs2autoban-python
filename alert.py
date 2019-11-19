@@ -52,7 +52,7 @@ def main():
         try:
             ranked = rs2wa.get_ranked_status()
             if not ranked.lower() == "ranked: yes":
-                success = wh.post_chat_message("WARNING: Server un-ranked! <&563072608564936704>")
+                success = wh.post_chat_message("WARNING: Server un-ranked! <@&563072608564936704> <@&548614059768020993>")
                 if not success:
                     write_exception("error posting web hook message")
                 time.sleep(30 * 30)
