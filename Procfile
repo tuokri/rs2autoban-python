@@ -1,1 +1,1 @@
-autoban: python autoban.py
+autoban: python alert.py
