@@ -199,4 +199,4 @@ def main():
 if __name__ == "__main__":
     logger.info("{file} running as {name}", file=__file__, name=__name__)
     subprocess.Popen(["python", "alert.py"], stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    main()
+    # main()
