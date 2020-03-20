@@ -4,3 +4,5 @@ Logbook
 pycurl
 soupsieve
 rs2wapy
+
+-e git://github.com/tuokri/rs2wat.git#egg=rs2wat
