@@ -51,7 +51,7 @@ def main():
     while True:
         try:
             ranked = rs2wa.get_current_game().info["Ranked"]
-            if ranked:
+            if not ranked:
                 success = wh.post_chat_message("WARNING: Server unranked! <@&563072608564936704> <@&548614059768020993>"
                                                "<@&643482540346179584>")
                 if not success:
