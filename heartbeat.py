@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 import time
@@ -33,6 +34,7 @@ def main():
 
     while True:
         try:
+            logger.info("polling pings...")
             cg = rs2wa.get_current_game()
             num_players, _ = cg.rules["Players (Max)"].split()
             num_players = int(num_players.strip())
@@ -42,7 +44,10 @@ def main():
                 avg = sum(pings) / len(pings)
                 min_ = min(pings)
                 max_ = max(pings)
-                msg = f"{num_players} players. Ping min={min_}, max={max_}, avg={avg}"
+                emoji = ":white_check_mark:" if avg <= 200 else ":warning:"
+                msg = (f"{emoji} [{datetime.datetime.now().isoformat()}]: "
+                       f"{num_players} players. "
+                       f"Ping min=**{min_}**, max=**{max_}**, avg=**{avg:.2f}**.")
                 wh.post_chat_message(msg)
         except Exception as e:
             write_exception(e)
