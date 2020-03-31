@@ -34,7 +34,8 @@ def main():
     while True:
         try:
             cg = rs2wa.get_current_game()
-            num_players, _ = int(cg.rules["Players (Max)"].split().strip())
+            num_players, _ = cg.rules["Players (Max)"].split()
+            num_players = int(num_players.strip())
             if num_players > 0:
                 pings = [p.stats["Ping"] for p in rs2wa.get_players()]
                 pings = [int(p.strip()) for p in pings]
