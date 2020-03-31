@@ -71,4 +71,4 @@ def main():
 if __name__ == "__main__":
     logger.info("{file} running as {name}", file=__file__, name=__name__)
     main()
-    subprocess.Popen("heartbeat.py")
+    subprocess.Popen(["python", "heartbeat.py"])
