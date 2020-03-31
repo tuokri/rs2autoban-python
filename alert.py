@@ -1,9 +1,11 @@
 import datetime
 import os
+import subprocess
 import sys
 import time
 
-from logbook import StreamHandler, Logger
+from logbook import Logger
+from logbook import StreamHandler
 from rs2wapy import RS2WebAdmin
 
 from simplediscordwh import DiscordWebhook
@@ -52,8 +54,9 @@ def main():
         try:
             ranked = rs2wa.get_current_game().info["Ranked"]
             if not ranked:
-                success = wh.post_chat_message("WARNING: Server unranked! <@&563072608564936704> <@&548614059768020993> "
-                                               "<@&643482540346179584>")
+                success = wh.post_chat_message(
+                    "WARNING: Server unranked! <@&563072608564936704> <@&548614059768020993> "
+                    "<@&643482540346179584>")
                 if not success:
                     write_exception("error posting web hook message")
                 time.sleep(30 * 30)
@@ -68,3 +71,4 @@ def main():
 if __name__ == "__main__":
     logger.info("{file} running as {name}", file=__file__, name=__name__)
     main()
+    subprocess.Popen("heartbeat.py")
