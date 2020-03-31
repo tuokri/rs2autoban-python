@@ -5,9 +5,9 @@ import time
 from logbook import Logger
 from logbook import StreamHandler
 
+from alert import connect
+from alert import write_exception
 from simplediscordwh import DiscordWebhook
-from .alert import connect
-from .alert import write_exception
 
 WEBHOOK_URL = os.environ["WEBHOOK_URL_HEARTBEAT"]
 WA_USERNAME = os.environ["WA_USERNAME"]
