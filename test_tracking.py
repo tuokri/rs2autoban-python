@@ -1,5 +1,7 @@
 import os
 
+import rs2wapy
+
 from alert import connect
 from simplediscordwh import DiscordWebhook
 
@@ -12,10 +14,15 @@ WA_URL = os.environ["WA_URL"]
 
 
 def main():
+    print("***********************************************")
+    print("rs2wapy.__version__:", rs2wapy.__version__)
+    print("***********************************************")
+
     wh = DiscordWebhook({
         "USER_AGENT": "TestBot 1.0",
         "WEBHOOK_URL": DISCORD_WEBHOOK,
     })
+
     rs2wa = connect(WA_USERNAME, WA_PASSWORD, WA_URL)
     tracking = rs2wa.get_tracked_players()
     for t in tracking:
