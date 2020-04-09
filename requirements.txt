@@ -3,6 +3,6 @@ bs4
 Logbook
 pycurl
 soupsieve
-rs2wapy
+rs2wapy>=0.5.27
 
 -e git://github.com/tuokri/rs2wat.git#egg=rs2wat
