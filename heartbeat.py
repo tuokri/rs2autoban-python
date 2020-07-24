@@ -46,8 +46,8 @@ def main():
                 max_ = max(pings)
                 emoji = ":white_check_mark:" if avg <= 200 else ":warning:"
                 msg = (f"{emoji} `[{datetime.datetime.now().isoformat()}]: "
-                       f"{num_players} players. "
-                       f"Ping min=**{min_}**, max=**{max_}**, avg=**{avg:.2f}**.`")
+                       f"{num_players:>2} players, "
+                       f"ping min={min_:<5}, max={max_:<5}, avg={avg:<5.2f}`")
                 wh.post_chat_message(msg)
         except Exception as e:
             write_exception(e)
